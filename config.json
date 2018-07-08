@@ -1,0 +1,5 @@
+{
+        "weather_underground_api": "YOUR API KEY GOES HERE",
+        "thingspeak_api": "YOUR THINGSPEAK API KEY GOES HERE",
+        "google_application_key": "YOUR GOOGLE APPLICATION STRING GOES HERE"
+}
