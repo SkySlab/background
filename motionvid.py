@@ -1,4 +1,4 @@
-import smtplib, os, glob, time, datetime, urllib2, json, httplib, subprocess
+import smtplib, os, glob, time, datetime, urllib, urllib2, json, httplib, subprocess
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
@@ -26,6 +26,16 @@ f.close()
 
 # Increment the number of events
 subprocess.call("/home/pi/background/events.sh", shell=True)
+
+# post to thingspeak
+def post_ts():
+        params = urllib.urlencode({'field1': EVENTS, 'key':ts_api})
+        headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
+        conn = httplib.HTTPConnection("api.thingspeak.com:80")
+        conn.request("POST", "/update", params, headers)
+        response = conn.getresponse()
+        data = response.read()
+        conn.close()
 
 # get the ambient temperature
 def getAmbient():
@@ -121,7 +131,6 @@ part.add_header('Content-Disposition', "attachment; filename= %s" % video_name)
 msg.attach(part)
 
 # attach the preview image to the email
-
 attachment = open(last_photo_taken, "rb")
 img = MIMEImage(attachment.read())
 img.add_header('Content-Disposition', "attachment; filename= %s" % photo_name)
@@ -129,9 +138,11 @@ attachment.close()
 msg.attach(img)
 
 # send the email
-
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
 server.login(google_login, google_key)
 server.sendmail(fromaddr, toaddr, msg.as_string())
 server.quit()
+
+# post to thingspeak
+post_ts()
