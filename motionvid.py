@@ -58,10 +58,8 @@ def getTheCPUColour(number):
                 span_colour = "<span style=color:red>"
         return(span_colour)
 
-cpu_temp = float(getCPUtemperature())
-Ambient = float(getAmbient())
-cpu_temp = getTheCPUColour(cpu_temp) + str(getCPUtemperature()) + "C"
-Ambient = getTheColour(Ambient) + str(getAmbient()) + "C"
+cpu_temp = getTheCPUColour(float(getCPUtemperature())) + str(getCPUtemperature()) + "C"
+Ambient = getTheColour(float(getAmbient())) + str(getAmbient()) + "C"
 
 # define message parameters and create the container
 
