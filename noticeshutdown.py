@@ -12,6 +12,7 @@ with open('/home/pi/background/config.json') as config_file:
         user_config = json.load(config_file)
         wu_api = user_config['weather_underground_api']
         ts_api = user_config['thingspeak_api']
+        google_key = user_config['google_application_key']
 
 # get the current temperature
 def getAmbient():
@@ -149,6 +150,6 @@ msg.attach(part2)
 
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
-server.login('baileys2611@gmail.com', 'tlhmdllkhvbeffug')
+server.login('baileys2611@gmail.com', google_key)
 server.sendmail(fromaddr, toaddr, msg.as_string())
 server.quit()
