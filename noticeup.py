@@ -13,10 +13,14 @@ with open('/home/pi/background/config.json') as config_file:
         wu_api = user_config['weather_underground_api']
         ts_api = user_config['thingspeak_api']
         google_key = user_config['google_application_key']
+        location = user_config['location']
+        fromaddr = user_config['fromaddr']
+        toaddr = user_config['toaddr']
+        google_login = user_config['google_login']
 
 # get the current temperature
 def getAmbient():
-        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/canberra.json')
+        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/' + location + ".json")
         json_string = f.read()
         parsed_json = json.loads(json_string)
         currentTemp_c = parsed_json['current_observation']['temp_c']
@@ -25,7 +29,7 @@ def getAmbient():
 
 #get the forecast for today
 def getForecastToday():
-        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/canberra.json')
+        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/' + location + ".json")
         json_string = f.read()
         parsed_json = json.loads(json_string)
         todayCondition = parsed_json['forecast']['txt_forecast']['forecastday'][0]['fcttext_metric']
@@ -34,7 +38,7 @@ def getForecastToday():
 
 # get the maximum for today and set the colour
 def getTodaysColour():
-        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/canberra.json')
+        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/' + location + ".json")
         json_string = f.read()
         parsed_json = json.loads(json_string)
         todayColour = str(getTheColour(float(parsed_json['forecast']['simpleforecast']['forecastday'][0]['high']['celsius'])))
@@ -43,7 +47,7 @@ def getTodaysColour():
 
 # get the low for tonight and set the colour
 def getTonightsColour():
-        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/canberra.json')
+        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/'+ location + ".json")
         json_string = f.read()
         parsed_json = json.loads(json_string)
         tonightsColour = str(getTheColour(float(parsed_json['forecast']['simpleforecast']['forecastday'][0]['low']['celsius'])))
@@ -52,7 +56,7 @@ def getTonightsColour():
 
 # get the high for tomorrow and set the colour
 def getTomorrowsColour():
-        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/canberra.json')
+        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/' + location + ".json")
         json_string = f.read()
         parsed_json = json.loads(json_string)
         tomorrowsColour = str(getTheColour(float(parsed_json['forecast']['simpleforecast']['forecastday'][1]['high']['celsius'])))
@@ -61,7 +65,7 @@ def getTomorrowsColour():
 
 # get the forecast for tonight
 def getForecastTonight():
-        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/canberra.json')
+        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/' + location + ".json")
         json_string = f.read()
         parsed_json = json.loads(json_string)
         tonightCondition = parsed_json['forecast']['txt_forecast']['forecastday'][1]['fcttext_metric']
@@ -70,7 +74,7 @@ def getForecastTonight():
 
 # get the forecast for tomorrow
 def getForecastTomorrow():
-        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/canberra.json')
+        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/' + location + ".json")
         json_string = f.read()
         parsed_json = json.loads(json_string)
         tomorrowCondition = parsed_json['forecast']['txt_forecast']['forecastday'][2]['fcttext_metric']
@@ -118,8 +122,6 @@ current_year = datetime.date.today().strftime("%Y")
 month_of_year = datetime.date.today().strftime("%B")
 day_of_month = datetime.date.today().strftime("%d")
 day_of_week = datetime.date.today().strftime("%A")
-fromaddr = "baileys2611@gmail.com"
-toaddr = "baileys2611@gmail.com"
 
 recipients = ['baileys2611@gmail.com', 'abailey73@gmail.com']
 
@@ -130,12 +132,12 @@ Ambient = getTheColour(Ambient) + str(getAmbient()) + "C"
 
 msg = MIMEMultipart('alternative')
 
-msg['From'] = 'baileys2611@gmail.com'
-msg['To'] = ", ".join(recipients)
+msg['From'] = fromaddr
+msg['To'] = toaddr
 msg['Subject'] = "Motion Cam Started at " + time.strftime("%H:%M") + " on " + time.strftime("%d/%m/%Y")
 
 html_1 = "<html><head></head><body>Good morning!<br><br>Today is " + day_of_week + ", " + day_of_month + " of " + month_of_year + " " + current_year + ".<br><br>"
-html_1a = "The forecast for Canberra is:<br>Today : " + getTodaysColour() + forecastToday + "</span><br>Tonight : " + getTonightsColour() + forecastTonight + "</span><br>Tomorrow : " + getTomorrowsColour() + forecastTomorrow + "</span><br><br>"
+html_1a = "The forecast for " + location + " is:<br>Today : " + getTodaysColour() + forecastToday + "</span><br>Tonight : " + getTonightsColour() + forecastTonight + "</span><br>Tomorrow : " + getTomorrowsColour() + forecastTomorrow + "</span><br><br>"
 html_2 = "I am currently " + cpu_temp + "</span> while the ambient temperature is " + Ambient + "</span>.</body></html>"
 
 text = ""
@@ -148,6 +150,6 @@ msg.attach(part2)
 
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
-server.login('baileys2611@gmail.com', google_key)
+server.login(google_login, google_key)
 server.sendmail(fromaddr, toaddr, msg.as_string())
 server.quit()
