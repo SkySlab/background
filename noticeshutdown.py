@@ -5,7 +5,6 @@ from email.MIMEBase import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.application import MIMEApplication
 from email import encoders
-from weather import Weather, Unit
 
 # Import weather_underground and Thingspeak keys
 with open('/home/pi/background/config.json') as config_file:
