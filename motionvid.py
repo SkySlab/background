@@ -62,7 +62,6 @@ cpu_temp = getTheCPUColour(float(getCPUtemperature())) + str(getCPUtemperature()
 Ambient = getTheColour(float(getAmbient())) + str(getAmbient()) + "C"
 
 # define message parameters and create the container
-
 msg = MIMEMultipart('alternative')
 
 msg['From'] = fromaddr
@@ -95,7 +94,6 @@ part.add_header('Content-Disposition', "attachment; filename= %s" % video_name)
 msg.attach(part)
 
 # attach the preview image to the email
-
 attachment = open(last_photo_taken, "rb")
 img = MIMEImage(attachment.read())
 img.add_header('Content-Disposition', "attachment; filename= %s" % photo_name)
@@ -103,7 +101,6 @@ attachment.close()
 msg.attach(img)
 
 # send the email
-
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
 server.login(google_login, google_key)
