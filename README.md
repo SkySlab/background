@@ -1,6 +1,8 @@
 # background
 Background tasks to perform in various raspberry pi configurations
 
+CONFIGURATION FOR MOTION AND SECURITY CAMERA
+--------------------------------------------
 Each shell script has to be given executable permission:
 
 chmod +777 *.sh
@@ -20,3 +22,9 @@ cron runs the shutdown task prior to shutting down the pi.  Here is an example t
 30 19 * * * /sbin/shutdown -h now
 
 The config.json file needs to be edited with user keys, logon for google, location, email addresses both to and from.  Location needs to correspond to WeatherUnderground location names as all the forecast and temperature data (other than CPU temperature) is called using the WeatherUnderground API.
+
+The Motion configuration file must be edited to include actions triggered after an event has occurred.  Motion.conf file is located at /etc/motion/motion.conf (for version 4 of motion that is) and the following configuration items are required:
+
+target_dir /var/lib/motion
+
+on_movie_end python /home/pi/background/motionvid.py %f
