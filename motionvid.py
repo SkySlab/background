@@ -8,6 +8,12 @@ from email import encoders
 
 time.sleep(5) # wait for 5 seconds to finish video encoding
 
+with open('/home/pi/background/config.json') as config_file:
+        user_config = json.load(config_file)
+        wu_api = user_config['weather_underground_api']
+        ts_api = user_config['thingspeak_api']
+        google_key = user_config['google_application_key']
+
 # define message parameters and create the container
 
 fromaddr = "baileys2611@gmail.com"
@@ -47,7 +53,7 @@ msg.attach(img)
 
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
-server.login('baileys2611@gmail.com', 'tlhmdllkhvbeffug')
+server.login('baileys2611@gmail.com', google_key)
 text = msg.as_string()
 server.sendmail(fromaddr, toaddr, text)
 server.quit()
