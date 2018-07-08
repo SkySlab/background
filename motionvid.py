@@ -1,4 +1,4 @@
-import smtplib, os, glob, time, datetime, urllib2, json, httplib
+import smtplib, os, glob, time, datetime, urllib2, json, httplib, subprocess
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
@@ -18,6 +18,14 @@ with open('/home/pi/background/config.json') as config_file:
         fromaddr = user_config['fromaddr']
         toaddr = user_config['toaddr']
         google_login = user_config['google_login']
+
+# Read the number of times events today
+f = open("/home/pi/background/eventscounter.txt", "r")
+EVENTS = f.read()
+f.close()
+
+# Increment the number of events
+subprocess.call("/home/pi/background/events.sh", shell=True)
 
 # get the ambient temperature
 def getAmbient():
@@ -58,18 +66,37 @@ def getTheCPUColour(number):
                 span_colour = "<span style=color:red>"
         return(span_colour)
 
+# Return information about disk space as a list (unit included)
+# Index 0: total disk space
+# Index 1: used disk space
+# Index 2: remaining disk space
+# Index 3: percentage of disk used
+def getDiskSpace():
+    p = os.popen("df -h /")
+    i = 0
+    while 1:
+        i = i +1
+        line = p.readline()
+        if i==2:
+            return(line.split()[1:5])
+
 cpu_temp = getTheCPUColour(float(getCPUtemperature())) + str(getCPUtemperature()) + "C"
 Ambient = getTheColour(float(getAmbient())) + str(getAmbient()) + "C"
 
+# Disk information
+DISK_stats = getDiskSpace()
+DISK_free = DISK_stats[2]
+
 # define message parameters and create the container
+
 msg = MIMEMultipart('alternative')
 
 msg['From'] = fromaddr
 msg['To'] = toaddr
 msg['Subject'] = "Motion detected at " + time.strftime("%H:%M") + " on " + time.strftime("%d/%m/%Y")
 
-html_1 = "<html><head></head><body> The camera has been activated.<br><br>"
-html_2 = "I am currently " + cpu_temp + "</span> while the ambient temperature is " + Ambient + "</span>.</body></html>"
+html_1 = "<html><head></head><body> The camera has been activated, there have been " + str(EVENTS) + " events today.<br><br>"
+html_2 = "I am currently " + cpu_temp + "</span> while the ambient temperature is " + Ambient + "</span>.  I have " + DISK_free + " disk space remaining.</body></html>"
 
 text = ""
 
@@ -94,6 +121,7 @@ part.add_header('Content-Disposition', "attachment; filename= %s" % video_name)
 msg.attach(part)
 
 # attach the preview image to the email
+
 attachment = open(last_photo_taken, "rb")
 img = MIMEImage(attachment.read())
 img.add_header('Content-Disposition', "attachment; filename= %s" % photo_name)
@@ -101,6 +129,7 @@ attachment.close()
 msg.attach(img)
 
 # send the email
+
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
 server.login(google_login, google_key)
