@@ -14,28 +14,73 @@ with open('/home/pi/background/config.json') as config_file:
         wu_api = user_config['weather_underground_api']
         ts_api = user_config['thingspeak_api']
         google_key = user_config['google_application_key']
-        location = user_config['location'] + ".json"
+        location = user_config['location']
         fromaddr = user_config['fromaddr']
         toaddr = user_config['toaddr']
         google_login = user_config['google_login']
 
 # get the ambient temperature
 def getAmbient():
-        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/' + location)
+        f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/' + location + '.json')
         json_string = f.read()
         parsed_json = json.loads(json_string)
         currentTemp_c = parsed_json['current_observation']['temp_c']
         return(currentTemp_c)
         f.close()
 
+# get my own temperature
+def getCPUtemperature():
+        res = os.popen('vcgencmd measure_temp').readline()
+        return(res.replace("temp=","").replace("'C\n",""))
+
+# colour the numbers dependant on value, used for forecast and ambient temperature.
+# CPU temperature colour should be different as tolerance is different.
+def getTheColour(number):
+        if (number <= 10):
+                span_colour = "<span style=color:blue>"
+        elif (number > 10) and (number <= 25):
+                span_colour = "<span style=color:olive>"
+        elif (number > 25) and (number <= 35):
+                span_colour = "<span style=color:orange>"
+        else:
+                span_colour = "<span style=color:red>"
+        return(span_colour)
+
+# colour the number of the CPU temperature.
+def getTheCPUColour(number):
+        if (number <= 10):
+                span_colour = "<span style=color:blue>"
+        elif (number > 10) and (number <= 35):
+                span_colour = "<span style=color:olive>"
+        elif (number > 35) and (number <= 55):
+                span_colour = "<span style=color:orange>"
+        else:
+                span_colour = "<span style=color:red>"
+        return(span_colour)
+
+cpu_temp = float(getCPUtemperature())
+Ambient = float(getAmbient())
+cpu_temp = getTheCPUColour(cpu_temp) + str(getCPUtemperature()) + "C"
+Ambient = getTheColour(Ambient) + str(getAmbient()) + "C"
+
 # define message parameters and create the container
 
-msg = MIMEMultipart()
+msg = MIMEMultipart('alternative')
+
 msg['From'] = fromaddr
 msg['To'] = toaddr
-msg['Subject'] = "Motion Cam Activated"
-body = "Video of Motion Detected"
-msg.attach(MIMEText(body, 'plain'))
+msg['Subject'] = "Motion detected at " + time.strftime("%H:%M") + " on " + time.strftime("%d/%m/%Y")
+
+html_1 = "<html><head></head><body> The camera has been activated.<br><br>"
+html_2 = "I am currently " + cpu_temp + "</span> while the ambient temperature is " + Ambient + "</span>.</body></html>"
+
+text = ""
+
+part1 = MIMEText(text, 'plain')
+part2 = MIMEText(html_1 + html_2, 'html')
+
+msg.attach(part1)
+msg.attach(part2)
 
 # get the picture and video path and name
 last_photo_taken = sorted(glob.glob("/var/lib/motion/*.jpg"),key=os.path.getmtime)[-1]
@@ -64,6 +109,5 @@ msg.attach(img)
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
 server.login(google_login, google_key)
-text = msg.as_string()
-server.sendmail(fromaddr, toaddr, text)
+server.sendmail(fromaddr, toaddr, msg.as_string())
 server.quit()
