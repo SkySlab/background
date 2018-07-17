@@ -6,8 +6,6 @@ from email.mime.image import MIMEImage
 from email.mime.application import MIMEApplication
 from email import encoders
 
-time.sleep(5) # wait for 5 seconds to finish video encoding
-
 # read and store our secret keys
 with open('/home/pi/background/config.json') as config_file:
         user_config = json.load(config_file)
@@ -18,18 +16,13 @@ with open('/home/pi/background/config.json') as config_file:
         fromaddr = user_config['fromaddr']
         toaddr = user_config['toaddr']
         google_login = user_config['google_login']
-
-# Read the number of times events today
-f = open("/home/pi/background/eventscounter.txt", "r")
-EVENTS = f.read()
-f.close()
-
-# Increment the number of events
-subprocess.call("/home/pi/background/events.sh", shell=True)
+        daily_counter_location = user_config['daily_counter_location']
+        global_counter_location = user_config['global_counter_location']
+        maximum_counter_location = user_config['max_counter_location']
 
 # post to thingspeak
 def post_ts():
-        params = urllib.urlencode({'field1': EVENTS, 'key':ts_api})
+        params = urllib.urlencode({'field1': daily_events, 'key':ts_api})
         headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
         conn = httplib.HTTPConnection("api.thingspeak.com:80")
         conn.request("POST", "/update", params, headers)
@@ -93,11 +86,56 @@ def getDiskSpace():
 cpu_temp = getTheCPUColour(float(getCPUtemperature())) + str(getCPUtemperature()) + "C"
 Ambient = getTheColour(float(getAmbient())) + str(getAmbient()) + "C"
 
+# read and increment the daily counter
+def get_daily_events_value(filename=daily_counter_location):
+    with open(filename, "r+") as f:
+        val = int(f.read() or 0) + 1
+        f.seek(0)
+        f.truncate()
+        f.write(str(val))
+        f.close()
+        return val
+
+# read and increment the global counter
+def get_global_events_value(filename=global_counter_location):
+    with open(filename, "r+") as f:
+        val = int(f.read() or 0) + 1
+        f.seek(0)
+        f.truncate()
+        f.write(str(val))
+        f.close()
+        return val
+
+# read and check the maximum daily events, update if this number of daily events is greater
+# than the maximum daily events to date.
+def get_max_events_value(maxfilename=maximum_counter_location, dailyfilename=daily_counter_location):
+    with open(maxfilename, "r+") as a:
+        with open(dailyfilename, "r+") as b:
+                maxval = int(a.read() or 0)
+                dailyval = int(b.read() or 0)
+        if (maxval > dailyval):
+                b.close()
+                a.close()
+                return maxval
+        else:
+                with open (maxfilename, "w") as a:
+                        maxval = maxval + 1
+                        a.seek(0)
+                        a.truncate()
+                        a.write(str(maxval))
+                        b.close()
+                        a.close()
+                return dailyval
+
 # Disk information
 DISK_stats = getDiskSpace()
 DISK_free = DISK_stats[2]
 
 # define message parameters and create the container
+
+#daily_events = get_daily_events_value()
+#global_events = get_global_events_value()
+#maximum_events = get_max_events_value()
 
 msg = MIMEMultipart('alternative')
 
@@ -105,7 +143,7 @@ msg['From'] = fromaddr
 msg['To'] = toaddr
 msg['Subject'] = "Motion detected at " + time.strftime("%H:%M") + " on " + time.strftime("%d/%m/%Y")
 
-html_1 = "<html><head></head><body> The camera has been activated, there have been " + str(EVENTS) + " events today.<br><br>"
+html_1 = "<html><head></head><body> The camera has been activated.<br><br>"
 html_2 = "I am currently " + cpu_temp + "</span> while the ambient temperature is " + Ambient + "</span>.  I have " + DISK_free + " disk space remaining.</body></html>"
 
 text = ""
@@ -145,4 +183,4 @@ server.sendmail(fromaddr, toaddr, msg.as_string())
 server.quit()
 
 # post to thingspeak
-post_ts()
+# post_ts()
