@@ -15,7 +15,10 @@ echo 0 > /home/pi/background/dailycountervalue.dat
 ```
 
 ### cron 
-Cron calls startup and shutdown scripts to start and stop  the motion service.  Here is an example that will call the cleandir script (which just cleans out the files in a directory each morning at 5 past 8.  Then two minutes before shutdown, an email is sent using the noticeshutdown script with final statistics and a forecast for tomorrow's weather.
+Cron calls startup and shutdown scripts to start and stop  the motion service.  Here is an example that will:
+1. At 08.05, call the cleandir script (which just cleans out the files in a directory).
+2. At 07.30, call the noticeup.py script starting the motion service, sending an email with today's weather and some stats. 
+3. At 20.30, call the notiiceshutdown.py script, stopping the motion service, sending an email stating as such with some weather stuff and stats.
 
 ```
 05 08 * * * /bin/bash /home/pi/background/cleandir.sh > /dev/null 2>&1
