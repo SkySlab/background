@@ -5,5 +5,8 @@
         "location": "YOUR CITY NAME GOES HERE",
         "fromaddr": "YOUR EMAIL ADDRESS GOES HERE",
         "toaddr": "THE DESTINATION EMAIL ADDRESSES GOES HERE",
-        "google_login": "GOOGLE EMAIL ADDRESS GOES HERE"
+        "google_login": "GOOGLE EMAIL ADDRESS GOES HERE",
+        "daily_counter_location": "PATH TO WHERE YOU WANT THE COUNTER",
+        "global_counter_location": "DITTO FROM ABOVE",
+        "max_counter_location": "DITTO FROM ABOVE"
 }
