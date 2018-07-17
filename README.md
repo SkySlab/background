@@ -1,20 +1,20 @@
-# background
+# Background
 Background tasks to perform in various raspberry pi configurations
 
-## CONFIGURATION FOR MOTION AND SECURITY CAMERA
+## Configuration for motion and security camera
 Each shell script has to be given executable permission:
 ```
 chmod +777 *.sh
 ```
 
-### rc.local 
+### Rc.local 
 This has to be modified to reset the counter on startup and run the startup python script:
 ```
 sudo /usr/bin/python /home/pi/background/noticeup.py
 echo 0 > /home/pi/background/dailycountervalue.dat
 ```
 
-### cron 
+### Cron 
 Cron calls startup and shutdown scripts to start and stop  the motion service.  Here is an example that will:
 1. At 08.05, call the cleandir script (which just cleans out the files in a directory).
 2. At 07.30, call the noticeup.py script starting the motion service, sending an email with today's weather and some stats. 
@@ -31,10 +31,10 @@ Cron calls startup and shutdown scripts to start and stop  the motion service.  
 @reboot /usr/bin/wevedstart.sh
 ```
 
-### config.json
+### Config.json
 The config.json file needs to be edited with user keys, logon for google, location, email addresses both to and from.  Location needs to correspond to WeatherUnderground location names as all the forecast and temperature data (other than CPU temperature) is called using the WeatherUnderground API.
 
-### motion.conf
+### Motion.conf
 The Motion configuration file must be edited to include actions triggered after an event has occurred.  Motion.conf file is located at /etc/motion/motion.conf (for version 4 of motion that is) and the following configuration items are required:
 ```
 target_dir /var/lib/motion
