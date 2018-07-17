@@ -31,10 +31,14 @@ Cron calls startup and shutdown scripts to start and stop  the motion service.  
 @reboot /usr/bin/wevedstart.sh
 ```
 
+### config.json
 The config.json file needs to be edited with user keys, logon for google, location, email addresses both to and from.  Location needs to correspond to WeatherUnderground location names as all the forecast and temperature data (other than CPU temperature) is called using the WeatherUnderground API.
 
+### motion.conf
 The Motion configuration file must be edited to include actions triggered after an event has occurred.  Motion.conf file is located at /etc/motion/motion.conf (for version 4 of motion that is) and the following configuration items are required:
 ```
 target_dir /var/lib/motion
 on_movie_end python /home/pi/background/motionvid.py
 ```
+
+I have included an example motion.conf in the library which seems to work well.  It has to be located at /etc/motion/ and must be named motion.conf
