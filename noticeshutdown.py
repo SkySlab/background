@@ -1,4 +1,4 @@
-import smtplib, os, glob, time, datetime, urllib2, json, httplib
+import smtplib, os, glob, time, datetime, urllib2, json, httplib, subprocess
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
@@ -16,6 +16,11 @@ with open('/home/pi/background/config.json') as config_file:
         fromaddr = user_config['fromaddr']
         toaddr = user_config['toaddr']
         google_login = user_config['google_login']
+
+# how many events occurred today?
+#f = open("/home/pi/background/eventscounter.txt", "r")
+#EVENTS = f.read()
+#f.close()
 
 # get the current temperature
 def getAmbient():
@@ -136,6 +141,7 @@ msg['To'] = toaddr
 msg['Subject'] = "Motion Cam Shutting Down at " + time.strftime("%H:%M") + " on " + time.strftime("%d/%m/%Y")
 
 html_1 = "<html><head></head><body>Good evening!<br><br>I am shutting down for today " + day_of_week + ", " + day_of_month + " of " + month_of_year + " " + current_year + ".<br><br>"
+#html_1aa = "There were <span style=color:red>" + str(EVENTS) + "</span> events today.<br><br>"
 html_1a = "The forecast for " + location + " is:<br>Tonight : " + getTonightsColour() + forecastTonight + "</span><br>Tomorrow : " + getTomorrowsColour() + forecastTomorrow + "</span><br><br>"
 html_2 = "I am currently " + cpu_temp + "</span> while the ambient temperature is " + Ambient + "</span>.<br><br>Have a good night.</body></html>"
 
@@ -152,3 +158,8 @@ server.starttls()
 server.login(google_login, google_key)
 server.sendmail(fromaddr, toaddr, msg.as_string())
 server.quit()
+
+command = "/usr/bin/sudo service motion stop"
+process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+output = process.communicate()[0]
+print output
