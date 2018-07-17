@@ -1,19 +1,21 @@
 # background
 Background tasks to perform in various raspberry pi configurations
 
-CONFIGURATION FOR MOTION AND SECURITY CAMERA
---------------------------------------------
+## CONFIGURATION FOR MOTION AND SECURITY CAMERA
 Each shell script has to be given executable permission:
 
 chmod +777 *.sh
 
-rc.local has to be modified to reset the counter on startup and run the startup python script:
+### rc.local 
+This has to be modified to reset the counter on startup and run the startup python script:
 
+```
 sudo /usr/bin/python /home/pi/background/noticeup.py
-
 echo 0 > /home/pi/background/dailycountervalue.dat
+```
 
-cron runs the shutdown task prior to shutting down the pi.  Here is an example that will call the cleandir script (which just cleans out the files in a directory each morning at 5 past 8.  Then two minutes before shutdown, an email is sent using the noticeshutdown script with final statistics and a forecast for tomorrow's weather.
+### cron 
+Cron calls startup and shutdown scripts to start and stop  the motion service.  Here is an example that will call the cleandir script (which just cleans out the files in a directory each morning at 5 past 8.  Then two minutes before shutdown, an email is sent using the noticeshutdown script with final statistics and a forecast for tomorrow's weather.
 
 05 08 * * * /bin/bash /home/pi/background/cleandir.sh > /dev/null 2>&1
 
