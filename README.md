@@ -11,15 +11,21 @@ rc.local has to be modified to reset the counter on startup and run the startup 
 
 sudo /usr/bin/python /home/pi/background/noticeup.py
 
-echo 1 > /home/pi/background/eventscounter.txt
+echo 0 > /home/pi/background/dailycountervalue.dat
 
 cron runs the shutdown task prior to shutting down the pi.  Here is an example that will call the cleandir script (which just cleans out the files in a directory each morning at 5 past 8.  Then two minutes before shutdown, an email is sent using the noticeshutdown script with final statistics and a forecast for tomorrow's weather.
 
 05 08 * * * /bin/bash /home/pi/background/cleandir.sh > /dev/null 2>&1
 
-28 19 * * * /usr/bin/python /home/pi/background/noticeshutdown.py
+30 07 * * * /usr/bin/python /home/pi/background/noticeup.py
 
-30 19 * * * /sbin/shutdown -h now
+30 20 * * * /usr/bin/python /home/pi/background/noticeshutdown.py
+
+
+...and if you're using the weaved connected service (from remot3.it) then include
+
+@reboot /usr/bin/wevedstart.sh
+
 
 The config.json file needs to be edited with user keys, logon for google, location, email addresses both to and from.  Location needs to correspond to WeatherUnderground location names as all the forecast and temperature data (other than CPU temperature) is called using the WeatherUnderground API.
 
