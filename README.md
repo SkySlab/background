@@ -1,5 +1,9 @@
 # Background
-Background tasks to perform in various raspberry pi configurations
+These scripts perform various background tasks using a Raspberry pi installed with Motion for security camera monitoring.  Tested with a Raspberry pi 1.2 B and B+, 3B and B+.  Tasks include:
+1. Send an email when starting with the local weather conditions for today, tonight and tomorrow.
+2. Record a picture, video on detecting motion and then send an email notification with the picture and video attached (along with local environmental conditions and some statistics).
+3. Clean out the directory that stores the video and picture files each morning (allowing recovery overnight but need to recover disk space for continued operation).
+4. Shut down the motion service at 20.00 each night, sending an email before shutting down with environmental conditions and statistics for the day.
 
 ## Configuration for motion and security camera
 Each shell script has to be given executable permission:
