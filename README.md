@@ -48,4 +48,4 @@ target_dir /var/lib/motion
 on_movie_end python /home/pi/background/motionvid.py
 ```
 
-I have included an example motion.conf in the library which seems to work well.  It has to be located at /etc/motion/ and must be named motion.conf
+I have included an example motion.conf in the library which seems to work well.  It has to be located at /etc/motion/ and must be named motion.conf.  I've also had some permissions issues WRT writing and reading files, so choose the most appropriate method desired to make sure that the motion user has access to /var/lib/motion and /home/pi/background and /etc/motion (where the config file needs to reside).
