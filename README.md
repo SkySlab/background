@@ -24,10 +24,13 @@ Cron calls startup and shutdown scripts to start and stop  the motion service.  
 2. At 07.30, call the noticeup.py script starting the motion service, sending an email with today's weather and some stats. 
 3. At 20.30, call the notiiceshutdown.py script, stopping the motion service, sending an email stating as such with some weather stuff and stats.
 
+Because I'm having 'issues' trying to get the autobrightness working to take into account the fluctuation of light during the day, I have to add a line that restarts motion frequently during the day.
+
 ```
 05 08 * * * /bin/bash /home/pi/background/cleandir.sh > /dev/null 2>&1
 30 07 * * * /usr/bin/python /home/pi/background/noticeup.py
 30 20 * * * /usr/bin/python /home/pi/background/noticeshutdown.py
+00 09,10,12,14,16,17,18,19 * * * sudo service motion restart
 ```
 
 ...and if you're using the weaved connected service (from remot3.it) then include
