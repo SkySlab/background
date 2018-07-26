@@ -1,4 +1,4 @@
-import smtplib, os, glob, time, datetime, urllib, urllib2, json, httplib, subprocess
+import sys, smtplib, os, glob, time, datetime, urllib, urllib2, json, httplib, subprocess
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
@@ -94,14 +94,12 @@ def get_daily_events_value(filename=daily_counter_location):
         f.truncate()
         f.write(str(val))
         f.close()
-        return val
+    return val
 
 # read and increment the global counter
 def get_global_events_value(filename=global_counter_location):
-    with open(filename, "r+") as f:
+    with open(filename, "w") as f:
         val = int(f.read() or 0) + 1
-        f.seek(0)
-        f.truncate()
         f.write(str(val))
         f.close()
         return val
@@ -109,8 +107,8 @@ def get_global_events_value(filename=global_counter_location):
 # read and check the maximum daily events, update if this number of daily events is greater
 # than the maximum daily events to date.
 def get_max_events_value(maxfilename=maximum_counter_location, dailyfilename=daily_counter_location):
-    with open(maxfilename, "r+") as a:
-        with open(dailyfilename, "r+") as b:
+    with open(maxfilename, "w") as a:
+        with open(dailyfilename, "w") as b:
                 maxval = int(a.read() or 0)
                 dailyval = int(b.read() or 0)
         if (maxval > dailyval):
@@ -133,7 +131,7 @@ DISK_free = DISK_stats[2]
 
 # define message parameters and create the container
 
-#daily_events = get_daily_events_value()
+daily_events = get_daily_events_value()
 #global_events = get_global_events_value()
 #maximum_events = get_max_events_value()
 
@@ -143,13 +141,16 @@ msg['From'] = fromaddr
 msg['To'] = toaddr
 msg['Subject'] = "Motion detected at " + time.strftime("%H:%M") + " on " + time.strftime("%d/%m/%Y")
 
-html_1 = "<html><head></head><body> The camera has been activated.<br><br>"
-html_2 = "I am currently " + cpu_temp + "</span> while the ambient temperature is " + Ambient + "</span>.  I have " + DISK_free + " disk space remaining.</body></html>"
+html_1 = "<html><head></head><body>"
+html_1a = "The camera has been activated.<br><br>"
+html_2 = "I am currently " + cpu_temp + "</span> while the ambient temperature is " + Ambient + "</span>.  I have " + DISK_free + " disk space remaining.<br><br>"
+html_3 = "There have been " + str(daily_events) + " events today."
+html_4 = "</body></html>"
 
 text = ""
 
 part1 = MIMEText(text, 'plain')
-part2 = MIMEText(html_1 + html_2, 'html')
+part2 = MIMEText(html_1 + html_1a + html_2 + html_3 + html_4, 'html')
 
 msg.attach(part1)
 msg.attach(part2)
@@ -184,3 +185,9 @@ server.quit()
 
 # post to thingspeak
 # post_ts()
+
+# wait for 15 seconds for the email to send
+time.sleep(15)
+
+# make sure that the python process exits and prevents handing processes if ther are errors
+sys.exit(0)
