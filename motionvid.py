@@ -98,32 +98,32 @@ def get_daily_events_value(filename=daily_counter_location):
 
 # read and increment the global counter
 def get_global_events_value(filename=global_counter_location):
-    with open(filename, "w") as f:
+    with open(filename, "r+") as f:
         val = int(f.read() or 0) + 1
+        f.seek(0)
+        f.truncate()
         f.write(str(val))
         f.close()
-        return val
+    return val
 
 # read and check the maximum daily events, update if this number of daily events is greater
 # than the maximum daily events to date.
 def get_max_events_value(maxfilename=maximum_counter_location, dailyfilename=daily_counter_location):
-    with open(maxfilename, "w") as a:
-        with open(dailyfilename, "w") as b:
+    with open(maxfilename, "r+") as a, open(dailyfilename, "r+") as b:
                 maxval = int(a.read() or 0)
                 dailyval = int(b.read() or 0)
-        if (maxval > dailyval):
-                b.close()
-                a.close()
-                return maxval
-        else:
-                with open (maxfilename, "w") as a:
+                if (maxval > dailyval):
+                        b.close()
+                        a.close()
+                        return maxval
+                else:
                         maxval = maxval + 1
                         a.seek(0)
                         a.truncate()
                         a.write(str(maxval))
                         b.close()
                         a.close()
-                return dailyval
+                        return dailyval
 
 # Disk information
 DISK_stats = getDiskSpace()
@@ -132,8 +132,8 @@ DISK_free = DISK_stats[2]
 # define message parameters and create the container
 
 daily_events = get_daily_events_value()
-#global_events = get_global_events_value()
-#maximum_events = get_max_events_value()
+global_events = get_global_events_value()
+maximum_events = get_max_events_value()
 
 msg = MIMEMultipart('alternative')
 
@@ -144,7 +144,7 @@ msg['Subject'] = "Motion detected at " + time.strftime("%H:%M") + " on " + time.
 html_1 = "<html><head></head><body>"
 html_1a = "The camera has been activated.<br><br>"
 html_2 = "I am currently " + cpu_temp + "</span> while the ambient temperature is " + Ambient + "</span>.  I have " + DISK_free + " disk space remaining.<br><br>"
-html_3 = "There have been " + str(daily_events) + " events today."
+html_3 = "There have been " + str(daily_events) + " events today and " + str(global_events) + " events over the life of this camera. The maximum number of events in any day so far has been " + str(maximum_events) + "."
 html_4 = "</body></html>"
 
 text = ""
