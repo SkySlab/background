@@ -117,7 +117,7 @@ def get_max_events_value(maxfilename=maximum_counter_location, dailyfilename=dai
                         a.close()
                         return maxval
                 else:
-                        maxval = maxval + 1
+                        maxval = dailyval
                         a.seek(0)
                         a.truncate()
                         a.write(str(maxval))
