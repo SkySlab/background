@@ -184,7 +184,7 @@ server.sendmail(fromaddr, toaddr, msg.as_string())
 server.quit()
 
 # post to thingspeak
-# post_ts()
+post_ts()
 
 # wait for 15 seconds for the email to send
 time.sleep(15)
