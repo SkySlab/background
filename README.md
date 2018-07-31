@@ -56,3 +56,5 @@ These need to be installed for ssh transfer to work.
 sudo apt-get install libffi-dev
 sudo pip install scp
 ```
+
+Don't forget to ssh into the server at least once before you try to scp any files or the scripts will fail as the known-hosts file gets updated after ssh-ing to the server in question.
