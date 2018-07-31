@@ -22,7 +22,7 @@ with open('/home/pi/background/config.json') as config_file:
 
 # post to thingspeak
 def post_ts():
-        params = urllib.urlencode({'field1': daily_events, 'key':ts_api})
+        params = urllib.urlencode({'field1': daily_events, 'field2': getCPUtemperature(), 'field3': getAmbient(), 'key':ts_api})
         headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
         conn = httplib.HTTPConnection("api.thingspeak.com:80")
         conn.request("POST", "/update", params, headers)
@@ -144,13 +144,14 @@ msg['Subject'] = "Motion detected at " + time.strftime("%H:%M") + " on " + time.
 html_1 = "<html><head></head><body>"
 html_1a = "The camera has been activated.<br><br>"
 html_2 = "I am currently " + cpu_temp + "</span> while the ambient temperature is " + Ambient + "</span>.  I have " + DISK_free + " disk space remaining.<br><br>"
-html_3 = "There have been " + str(daily_events) + " events today and " + str(global_events) + " events over the life of this camera. The maximum number of events in any day so far has been " + str(maximum_events) + "."
+html_3 = "There have been " + str(daily_events) + " events today and " + str(global_events) + " events over the life of this camera. The maximum number of events in any day so far has been " + str(maximum_events) + ", which was on " + str(time.ctime(os.path.getmtime(maximum_counter_location))) + "."
+html_3a = "<br><br>"
 html_4 = "</body></html>"
 
 text = ""
 
 part1 = MIMEText(text, 'plain')
-part2 = MIMEText(html_1 + html_1a + html_2 + html_3 + html_4, 'html')
+part2 = MIMEText(html_1 + html_1a + html_2 + html_3 + html_3a + html_4, 'html')
 
 msg.attach(part1)
 msg.attach(part2)
@@ -187,7 +188,7 @@ server.quit()
 post_ts()
 
 # wait for 15 seconds for the email to send
-time.sleep(15)
+# time.sleep(15)
 
 # make sure that the python process exits and prevents handing processes if ther are errors
 sys.exit(0)
