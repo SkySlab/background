@@ -1,4 +1,4 @@
-import sys, smtplib, os, glob, time, datetime, urllib, urllib2, json, httplib, subprocess
+import sys, smtplib, os, glob, time, datetime, urllib, urllib2, json, httplib, subprocess, shutil, paramiko
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
@@ -187,8 +187,27 @@ server.quit()
 # post to thingspeak
 post_ts()
 
-# wait for 15 seconds for the email to send
-# time.sleep(15)
+# now that the email is sent, stats updated, this portion of the script will place the
+# updated files on to a server so that last known movements can be monitored
+
+shutil.copy2(last_photo_taken, '/var/lib/motion/drivewaystill.jpg')
+shutil.copy2(last_video_taken, '/var/lib/motion/drivewayvideo.avi')
+
+ssh = paramiko.SSHClient()
+ssh.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
+ssh.connect('192.168.0.124', username='admin', password='qx6&68#XER#e')
+sftp = ssh.open_sftp()
+sftp.put('/var/lib/motion/drivewaystill.jpg', '/share/Web/skyslab/stills/drivewaystill.jpg')
+sftp.close()
+ssh.close()
+
+ssh = paramiko.SSHClient()
+ssh.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
+ssh.connect('192.168.0.124', username='admin', password='qx6&68#XER#e')
+sftp = ssh.open_sftp()
+sftp.put('/var/lib/motion/drivewayvideo.avi', '/share/Web/skyslab/stills/drivewayvideo.avi')
+sftp.close()
+ssh.close()
 
 # make sure that the python process exits and prevents handing processes if ther are errors
 sys.exit(0)
