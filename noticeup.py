@@ -1,4 +1,4 @@
-import smtplib, os, glob, time, datetime, urllib2, json, httplib
+import smtplib, os, glob, time, datetime, urllib2, json, httplib, subprocess
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
@@ -152,3 +152,8 @@ server.starttls()
 server.login(google_login, google_key)
 server.sendmail(fromaddr, toaddr, msg.as_string())
 server.quit()
+
+command = "/usr/bin/sudo service motion start"
+process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+output = process.communicate()[0]
+print output
