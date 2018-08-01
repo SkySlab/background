@@ -16,7 +16,16 @@ with open('/home/pi/background/config.json') as config_file:
         fromaddr = user_config['fromaddr']
         toaddr = user_config['toaddr']
         google_login = user_config['google_login']
-
+        daily_counter_location = user_config['daily_counter_location']
+        
+def reset_daily_counter(filename=daily_counter_location):
+    with open(filename, "r+") as f:
+        val = 0
+        f.seek(0)
+        f.truncate()
+        f.write(str(val))
+        f.close()
+        
 # get the current temperature
 def getAmbient():
         f = urllib2.urlopen('http://api.wunderground.com/api/' + wu_api + '/conditions/forecast/q/' + location + ".json")
@@ -152,6 +161,8 @@ server.starttls()
 server.login(google_login, google_key)
 server.sendmail(fromaddr, toaddr, msg.as_string())
 server.quit()
+
+reset_daily_counter()
 
 command = "/usr/bin/sudo service motion start"
 process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
