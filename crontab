@@ -20,8 +20,9 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 #
 # m h  dom mon dow   command
-05 08 * * * /bin/bash /home/pi/background/cleandir.sh > /dev/null 2>&1
+00 06 * * * /bin/bash /home/pi/background/cleandir.sh > /dev/null 2>&1
+00 07 * * * sudo /sbin/shutdown -r now
 30 07 * * * /usr/bin/python /home/pi/background/noticeup.py
 00 20 * * * /usr/bin/python /home/pi/background/noticeshutdown.py
-00 09,10,12,14,16,17,18,19 * * * sudo service motion restart
+00 08,09,10,11,12,13,14,15,16,17,18,19 * * * sudo service motion restart
 @reboot /usr/bin/weavedstart.sh
