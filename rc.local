@@ -17,7 +17,7 @@ if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 fi
 
-sudo /usr/bin/python /home/pi/background/noticeup.py
+# sudo /usr/bin/python /home/pi/background/noticeup.py
 echo 0 > /home/pi/background/dailycountervalue.dat
 
 exit 0
