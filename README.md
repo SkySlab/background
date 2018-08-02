@@ -74,9 +74,6 @@ sudo rpi-update
 reboot
 ```
 sudo apt-get install htop
-sudo apt-get install -f git git-core make autoconf automake gettext libtool libjpeg-dev
-sudo apt-get -f install motion
-sudo modprobe bcm2835-v4l2
 ```
 
 2. Install weavedconnect from Remot3.it.
@@ -95,5 +92,14 @@ sudo apt-get install python-pip
 ```
 
 5. Install the scripts
-6. Modify /etc/rc.local
-7. Install sudo crontab
+6. Make the motion log directory
+```
+sudo mkdir /var/log/motion
+```
+7. Start motion once using the config file
+```
+sudo motion -c /etc/motion/motion.conf
+```
+8. Add the motion user to the correct permissions to allow creating and deleting files.
+9. Modify /etc/rc.local
+9. Install sudo crontab
