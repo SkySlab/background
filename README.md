@@ -70,6 +70,8 @@ The steps:
 sudo apt-get update
 sudo apt-get upgrade
 sudo rpi-update
+sudo apt-get install motion -y
+sudo modprobe bcm2835-v4l2
 ```
 reboot
 ```
