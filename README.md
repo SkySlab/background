@@ -35,7 +35,7 @@ Because I'm having 'issues' trying to get the autobrightness working to take int
 
 ...and if you're using the weaved connected service (from remot3.it) then include
 ```
-@reboot /usr/bin/wevedstart.sh
+@reboot /usr/bin/weavedstart.sh
 ```
 
 ### Config.json
