@@ -69,6 +69,10 @@ The steps:
 ```
 sudo apt-get update
 sudo apt-get upgrade
+sudo rpi-update
+```
+reboot
+```
 sudo apt-get install htop
 git clone git://git.linuxtv.org/v4l-utils.git
 cd v4l-utils
