@@ -74,16 +74,9 @@ sudo rpi-update
 reboot
 ```
 sudo apt-get install htop
-sudo apt-get install git git-core make autoconf automake
-git clone git://git.linuxtv.org/v4l-utils.git
-cd v4l-utils
-sudo apt-get install autoconf gettext libtool libjpeg-dev
-autoreconf -vfi
-./configure
-make
-sudo make install
+sudo apt-get install -f git git-core make autoconf automake gettext libtool libjpeg-dev
+sudo apt-get -f install motion
 sudo modprobe bcm2835-v4l2
-sudo apt-get install motion
 ```
 
 2. Install weavedconnect from Remot3.it.
