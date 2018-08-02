@@ -60,3 +60,33 @@ sudo pip install scp
 ```
 
 Don't forget to ssh into the server (as root!) at least once before you try to scp any files or the scripts will fail as the known-hosts file gets updated after ssh-ing to the server in question.
+
+### Install Motion and some other useful stuff
+
+The steps:
+
+1. Pre-set the Rpi to install motion and recognise the raspi-camera as a usb camera.
+```
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install htop
+sudo modprobe bcm2835-v4l2
+sudo apt-get install motion
+```
+
+2. Install weavedconnect from Remot3.it.
+
+```
+sudo apt-get install weavedconnectd
+sudo weavedinstaller
+```
+Then set the ssh port as default and 8081 port as http server.
+
+3. Modify Motion.conf.
+4. Install python and packages
+```
+sudo apt-get install python
+sudo apt-get install python-pip
+```
+
+5. Install the scripts
