@@ -77,7 +77,7 @@ sudo apt-get install htop
 sudo apt-get install git git-core make autoconf automake
 git clone git://git.linuxtv.org/v4l-utils.git
 cd v4l-utils
-sudo apt-get install autoconf gettext libtool libjpeg62-dev
+sudo apt-get install autoconf gettext libtool libjpeg-dev
 autoreconf -vfi
 ./configure
 make
