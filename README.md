@@ -70,6 +70,13 @@ The steps:
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install htop
+git clone git://git.linuxtv.org/v4l-utils.git
+cd v4l-utils
+sudo apt-get install autoconf gettext libtool libjpeg62-dev
+autoreconf -vfi
+./configure
+make
+sudo make install
 sudo modprobe bcm2835-v4l2
 sudo apt-get install motion
 ```
