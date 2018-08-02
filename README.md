@@ -74,6 +74,7 @@ sudo rpi-update
 reboot
 ```
 sudo apt-get install htop
+sudo apt-get install git git-core make autoconf automake
 git clone git://git.linuxtv.org/v4l-utils.git
 cd v4l-utils
 sudo apt-get install autoconf gettext libtool libjpeg62-dev
@@ -101,3 +102,5 @@ sudo apt-get install python-pip
 ```
 
 5. Install the scripts
+6. Modify /etc/rc.local
+7. Install sudo crontab
